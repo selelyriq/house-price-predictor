@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  house-price-predictor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    container_name: house-price-api
+
+  streamlit:
+    build:
+      context: ./streamlit_app
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://house-price-predictor:8000
+    depends_on:
+      - house-price-predictor
+    container_name: house-price-ui
