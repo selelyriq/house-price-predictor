@@ -42,6 +42,16 @@ jobs:
             - name: Start MLflow server
               run: |
                   docker run -d -p 5555:5555 --name mlflow-server -v ${{ github.workspace }}/mlruns:/mlruns ghcr.io/mlflow/mlflow:latest mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlruns --host 0.0.0.0
+                  sleep 10
+
+            - name: Wait for MLflow to be ready
+              run: |
+                  for i in {1..30}; do
+                    curl -f http://localhost:5555/api/2.0/mlflow/version && break
+                    echo "Waiting for MLflow... ($i/30)"
+                    sleep 2
+                  done
+
             - name: Train Model and Experimentation
               run: |
                   python src/models/train_model.py   --config configs/model_config.yaml   --data data/processed/featured_house_data.csv   --models-dir models   --mlflow-tracking-uri http://localhost:5555
