@@ -1,11 +1,14 @@
 import joblib
 import pandas as pd
 from datetime import datetime
+from pathlib import Path
 from .schemas import HousePredictionRequest, PredictionResponse
 
 # Load model and preprocessor
-MODEL_PATH = "models/trained/house_price_model.pkl"
-PREPROCESSOR_PATH = "models/trained/preprocessor.pkl"
+# Use absolute path relative to the app root
+APP_ROOT = Path(__file__).parent.parent.parent
+MODEL_PATH = APP_ROOT / "models" / "trained" / "house_price_model.pkl"
+PREPROCESSOR_PATH = APP_ROOT / "models" / "trained" / "preprocessor.pkl"
 
 try:
     model = joblib.load(MODEL_PATH)
