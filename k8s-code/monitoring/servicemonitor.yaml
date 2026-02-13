@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: house-price-predictor-servicemonitor
+  namespace: monitoring
+  labels:
+    release: prometheus-operator
+spec:
+  selector:
+    matchLabels:
+      app: house-price-predictor
+  endpoints:
+  - port: "8000"
+    path: /metrics
+    interval: 15s

@@ -1,0 +1,40 @@
+# Prometheus Stack Helm Values
+# Install with: helm upgrade --install prom -n monitoring prometheus-community/kube-prometheus-stack -f prometheus-values.yaml
+
+grafana:
+  service:
+    type: NodePort
+    nodePort: 30200
+
+  adminPassword: "TWhi6gjUhB9d6eP7FrTnxs0At9ek2rhnqyFS7NLe"
+
+  # Dashboard sidecar configuration
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+
+    # Retention settings
+    retention: 10d
+
+    # Storage (optional - uncomment to enable persistent storage)
+    # storageSpec:
+    #   volumeClaimTemplate:
+    #     spec:
+    #       accessModes: ["ReadWriteOnce"]
+    #       resources:
+    #         requests:
+    #           storage: 10Gi
+
+alertmanager:
+  enabled: true

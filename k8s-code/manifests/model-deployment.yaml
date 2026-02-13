@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: model
+  template:
+    metadata:
+      labels:
+        app: model
+    spec:
+      imagePullSecrets:
+      - name: docker-credentials
+      containers:
+      - name: house-price-predictor-model
+        image: lyriqsele/house-price-predictor-api:latest
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "50m"
+          requests:
+            memory: "64Mi"
+            cpu: "25m"
