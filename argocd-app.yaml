@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: house-price-predictor
+  namespace: argocd
+  # Add finalizer to ensure proper cleanup
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # Source repository configuration
+  source:
+    repoURL: https://github.com/selelyriq/house-price-predictor.git
+    targetRevision: main
+    path: k8s-code/manifests
+
+  # Destination cluster and namespace
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  # Sync policy for automatic deployment
+  syncPolicy:
+    # Enable automatic sync when changes are detected in Git
+    automated:
+      # Automatically prune resources that are no longer in Git
+      prune: true
+      # Automatically sync when the application is out of sync
+      selfHeal: true
+      # Allow empty directories
+      allowEmpty: false
+
+    # Sync options
+    syncOptions:
+      - CreateNamespace=true  # Create namespace if it doesn't exist
+      - PruneLast=true        # Prune resources as the last step
+      - RespectIgnoreDifferences=true
+
+    # Retry configuration
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+  # Project (use default project)
+  project: default
+
+  # Health and sync status
+  revisionHistoryLimit: 10
